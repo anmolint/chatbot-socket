@@ -68,21 +68,29 @@
       var input = document.getElementById("input");
       form.addEventListener("submit", function (e) {
         e.preventDefault();
+        const name = window.localStorage.getItem('name')
         if (input.value) {
-          socket.emit("chat message", input.value);
+          var chatstatus={
+            namevalue:name,
+            messages:input.value
+          }
+          socket.emit("chat message",chatstatus);
           input.value = "";
         }
       });
       socket.on("connection",function(messagespast){
-        var item = document.createElement("li");
-        item.textContent = messagespast;
-        messages.appendChild(item);
+        console.log(messagespast);
+        messagespast.map(el=>{
+          var item = document.createElement("li");
+          item.textContent = `${el.name}: ${el.message}`;
+          messages.appendChild(item);
+        })
         window.scrollTo(0, document.body.scrollHeight);
 
       })
       socket.on("chat message", function (msg) {
         var item = document.createElement("li");
-        item.textContent = msg;
+        item.textContent = msg.messages;
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       });
